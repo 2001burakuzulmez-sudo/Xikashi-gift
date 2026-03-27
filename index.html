@@ -15,213 +15,123 @@
     --rose-light: #e8a898;
     --parchment:  #f0dfc8;
   }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--warm-bg); font-family:'Crimson Pro',serif; overflow:hidden; height:100vh; width:100vw; }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    background: var(--warm-bg);
-    font-family: 'Crimson Pro', serif;
-    overflow: hidden;
-    height: 100vh; width: 100vw;
-  }
-
-  /* Grain */
+  /* grain */
   body::before {
-    content: ''; position: fixed; inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
-    pointer-events: none; z-index: 500; opacity: 0.55;
+    content:''; position:fixed; inset:0; pointer-events:none; z-index:500; opacity:0.5;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
   }
-
-  /* Vignette */
+  /* vignette */
   body::after {
-    content: ''; position: fixed; inset: 0;
-    background: radial-gradient(ellipse at center, transparent 50%, rgba(8,3,1,0.65) 100%);
-    pointer-events: none; z-index: 499;
+    content:''; position:fixed; inset:0; pointer-events:none; z-index:499;
+    background:radial-gradient(ellipse at center, transparent 50%, rgba(8,3,1,0.65) 100%);
   }
 
   /* ── INTRO ── */
   #intro {
-    position: fixed; inset: 0; background: var(--warm-bg);
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    z-index: 600; transition: opacity 1.3s ease, transform 1.3s ease;
+    position:fixed; inset:0; background:var(--warm-bg); z-index:600;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    transition:opacity 1.3s ease, transform 1.3s ease;
   }
-  #intro.hidden { opacity: 0; pointer-events: none; transform: scale(1.05); }
-  .intro-ornament {
-    color: var(--gold); font-size: 1.1rem; letter-spacing: 0.7em;
-    opacity: 0; animation: fadeUp 1s ease 0.3s forwards;
-  }
+  #intro.hidden { opacity:0; pointer-events:none; transform:scale(1.05); }
+  .intro-ornament { color:var(--gold); font-size:1.1rem; letter-spacing:0.7em; opacity:0; animation:fadeUp 1s ease 0.3s forwards; }
   .intro-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(3rem, 6.5vw, 5.2rem);
-    color: var(--parchment); font-weight: 300; font-style: italic;
-    text-align: center; line-height: 1.08; margin: 0.45em 0;
-    opacity: 0; animation: fadeUp 1s ease 0.7s forwards;
+    font-family:'Cormorant Garamond',serif; font-size:clamp(3rem,6.5vw,5.2rem);
+    color:var(--parchment); font-weight:300; font-style:italic;
+    text-align:center; line-height:1.08; margin:0.45em 0;
+    opacity:0; animation:fadeUp 1s ease 0.7s forwards;
   }
-  .intro-sub {
-    color: var(--rose-light); font-size: 1.05rem; font-weight: 300;
-    letter-spacing: 0.18em; opacity: 0; animation: fadeUp 1s ease 1.1s forwards;
-  }
+  .intro-sub { color:var(--rose-light); font-size:1.05rem; font-weight:300; letter-spacing:0.18em; opacity:0; animation:fadeUp 1s ease 1.1s forwards; }
   .intro-btn {
-    margin-top: 3em; padding: 0.75em 3em;
-    border: 1px solid var(--amber); background: transparent;
-    color: var(--gold); font-family: 'Crimson Pro', serif;
-    font-size: 1rem; letter-spacing: 0.28em; cursor: pointer;
-    position: relative; overflow: hidden;
-    opacity: 0; animation: fadeUp 1s ease 1.5s forwards; transition: color 0.4s;
+    margin-top:3em; padding:0.75em 3em; border:1px solid var(--amber);
+    background:transparent; color:var(--gold); font-family:'Crimson Pro',serif;
+    font-size:1rem; letter-spacing:0.28em; cursor:pointer;
+    position:relative; overflow:hidden; opacity:0; animation:fadeUp 1s ease 1.5s forwards; transition:color 0.4s;
   }
-  .intro-btn::before {
-    content: ''; position: absolute; inset: 0; background: var(--amber);
-    transform: translateX(-100%); transition: transform 0.4s ease; z-index: -1;
-  }
-  .intro-btn:hover { color: var(--warm-bg); }
-  .intro-btn:hover::before { transform: translateX(0); }
+  .intro-btn::before { content:''; position:absolute; inset:0; background:var(--amber); transform:translateX(-100%); transition:transform 0.4s ease; z-index:-1; }
+  .intro-btn:hover { color:var(--warm-bg); }
+  .intro-btn:hover::before { transform:translateX(0); }
 
   /* ── MAP ── */
-  #map { width: 100vw; height: 100vh; opacity: 0; transition: opacity 1.2s ease; z-index: 1; }
-  #map.visible { opacity: 1; }
-
-  .maplibregl-ctrl-attrib { background: rgba(19,11,5,0.8) !important; color: #7a5535 !important; font-size: 9px !important; }
-  .maplibregl-ctrl-attrib a { color: #9a6838 !important; }
-  .maplibregl-ctrl-group { background: rgba(26,14,6,0.92) !important; border: 1px solid #3a2010 !important; box-shadow: none !important; }
-  .maplibregl-ctrl-group button { background-color: transparent !important; }
-  .maplibregl-ctrl-icon { filter: invert(0.7) sepia(1) hue-rotate(340deg) saturate(0.8); }
+  #map { width:100vw; height:100vh; opacity:0; transition:opacity 1.2s ease; z-index:1; cursor:pointer; }
+  #map.visible { opacity:1; }
+  .maplibregl-ctrl-attrib { background:rgba(19,11,5,0.8)!important; color:#7a5535!important; font-size:9px!important; }
+  .maplibregl-ctrl-attrib a { color:#9a6838!important; }
+  .maplibregl-ctrl-group { background:rgba(26,14,6,0.92)!important; border:1px solid #3a2010!important; box-shadow:none!important; }
+  .maplibregl-ctrl-group button { background-color:transparent!important; }
+  .maplibregl-ctrl-icon { filter:invert(0.7) sepia(1) hue-rotate(340deg) saturate(0.8); }
 
   /* ── HEADER ── */
   #header {
-    position: fixed; top: 0; left: 0; right: 0; padding: 1.3em 2em;
-    display: flex; align-items: baseline; gap: 1em; z-index: 400;
-    opacity: 0; pointer-events: none; transition: opacity 1s ease 0.4s;
-    background: linear-gradient(to bottom, rgba(10,5,2,0.85), transparent);
+    position:fixed; top:0; left:0; right:0; padding:1.3em 2em;
+    display:flex; align-items:baseline; gap:1em; z-index:400;
+    opacity:0; pointer-events:none; transition:opacity 1s ease 0.4s;
+    background:linear-gradient(to bottom, rgba(10,5,2,0.85), transparent);
   }
-  #header.visible { opacity: 1; }
-  #header-title { font-family: 'Cormorant Garamond', serif; font-size: 1.55rem; color: var(--parchment); font-style: italic; font-weight: 300; }
-  #header-sub { font-size: 0.76rem; color: var(--amber); letter-spacing: 0.22em; }
+  #header.visible { opacity:1; }
+  #header-title { font-family:'Cormorant Garamond',serif; font-size:1.55rem; color:var(--parchment); font-style:italic; font-weight:300; }
+  #header-sub { font-size:0.76rem; color:var(--amber); letter-spacing:0.22em; }
 
   /* ── HINT ── */
   #hint {
-    position: fixed; bottom: 2.2em; left: 50%; transform: translateX(-50%);
-    color: var(--amber); font-size: 0.8rem; letter-spacing: 0.22em;
-    z-index: 400; opacity: 0; transition: opacity 1.2s ease;
-    pointer-events: none; white-space: nowrap;
+    position:fixed; bottom:2.2em; left:50%; transform:translateX(-50%);
+    color:var(--amber); font-size:0.8rem; letter-spacing:0.22em;
+    z-index:400; opacity:0; transition:opacity 1.2s ease; pointer-events:none; white-space:nowrap;
   }
-  #hint.visible { opacity: 0.5; }
+  #hint.visible { opacity:0.5; }
 
-  /* ── CUSTOM PIN ── */
-  /* FIX: pin wrapper has explicit fixed size so MapLibre anchor is stable */
-  .mem-pin-wrap {
-    width: 30px;
-    height: 46px;           /* bubble(22) + gap(2) + tip(8) + overflow(14) */
-    position: relative;
-    cursor: pointer;
+  /* ── HOVER LABEL (floats near cursor over a pin) ── */
+  #pin-label {
+    position:fixed; z-index:450; pointer-events:none;
+    background:rgba(19,11,5,0.92); border:1px solid rgba(200,129,58,0.5);
+    color:var(--parchment); font-family:'Cormorant Garamond',serif;
+    font-style:italic; font-size:12px; white-space:nowrap;
+    padding:3px 11px 4px; box-shadow:0 4px 16px rgba(0,0,0,0.5);
+    transform:translate(-50%,-100%) translateY(-10px);
+    opacity:0; transition:opacity 0.2s;
   }
-  .mem-pin {
-    position: absolute;
-    bottom: 0; left: 50%;
-    transform: translateX(-50%);
-    display: flex; flex-direction: column; align-items: center;
-  }
-  .pin-bubble {
-    width: 22px; height: 22px;
-    border-radius: 50% 50% 50% 0;
-    transform: rotate(-45deg);
-    background: radial-gradient(circle at 35% 35%, #e8a898, #c4705a);
-    border: 2px solid var(--gold);
-    box-shadow: 0 0 10px rgba(196,112,90,0.75), 0 0 22px rgba(196,112,90,0.35);
-    transition: all 0.3s;
-    animation: pinGlow 2.5s ease-in-out infinite;
-    flex-shrink: 0;
-  }
-  .mem-pin-wrap:hover .pin-bubble {
-    background: radial-gradient(circle at 35% 35%, #f5ede0, #e8b96a);
-    box-shadow: 0 0 16px rgba(232,185,106,1), 0 0 32px rgba(232,185,106,0.5);
-    transform: rotate(-45deg) scale(1.2);
-  }
-  .pin-tip {
-    width: 2px; height: 8px; background: var(--rose);
-    margin-top: -1px; transition: background 0.3s; flex-shrink: 0;
-  }
-  .mem-pin-wrap:hover .pin-tip { background: var(--gold); }
-  .pin-lbl {
-    position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%);
-    background: rgba(19,11,5,0.92); border: 1px solid rgba(200,129,58,0.45);
-    color: var(--parchment); font-family: 'Cormorant Garamond', serif;
-    font-style: italic; font-size: 12px; white-space: nowrap;
-    padding: 3px 11px 4px; opacity: 0; pointer-events: none;
-    transition: opacity 0.25s; box-shadow: 0 4px 16px rgba(0,0,0,0.5);
-  }
-  .mem-pin-wrap:hover .pin-lbl { opacity: 1; }
+  #pin-label.visible { opacity:1; }
 
   /* ── MODAL ── */
   #modal-overlay {
-    position: fixed; inset: 0; background: rgba(8,3,1,0); z-index: 700;
-    display: flex; align-items: center; justify-content: center;
-    pointer-events: none; transition: background 0.5s ease;
+    position:fixed; inset:0; background:rgba(8,3,1,0); z-index:700;
+    display:flex; align-items:center; justify-content:center;
+    pointer-events:none; transition:background 0.5s ease;
   }
-  #modal-overlay.open { background: rgba(8,3,1,0.84); pointer-events: all; backdrop-filter: blur(5px); }
+  #modal-overlay.open { background:rgba(8,3,1,0.84); pointer-events:all; backdrop-filter:blur(5px); }
   #modal {
-    background: linear-gradient(150deg, #2c1a09, #180e05);
-    border: 1px solid #4a2c14; max-width: 560px; width: 92vw;
-    position: relative; transform: translateY(28px) scale(0.96); opacity: 0;
-    transition: all 0.45s cubic-bezier(0.22, 1, 0.36, 1); overflow: hidden;
-    box-shadow: 0 32px 90px rgba(0,0,0,0.8), inset 0 1px 0 rgba(232,185,106,0.18);
+    background:linear-gradient(150deg,#2c1a09,#180e05); border:1px solid #4a2c14;
+    max-width:560px; width:92vw; position:relative;
+    transform:translateY(28px) scale(0.96); opacity:0;
+    transition:all 0.45s cubic-bezier(0.22,1,0.36,1); overflow:hidden;
+    box-shadow:0 32px 90px rgba(0,0,0,0.8), inset 0 1px 0 rgba(232,185,106,0.18);
   }
-  #modal-overlay.open #modal { transform: translateY(0) scale(1); opacity: 1; }
+  #modal-overlay.open #modal { transform:translateY(0) scale(1); opacity:1; }
   #modal::before {
-    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-    background: linear-gradient(90deg, transparent, var(--gold), var(--rose), var(--gold), transparent);
+    content:''; position:absolute; top:0; left:0; right:0; height:2px;
+    background:linear-gradient(90deg,transparent,var(--gold),var(--rose),var(--gold),transparent);
   }
-
-  /* Media area — holds photo, video, or emoji placeholder */
-  #modal-media {
-    width: 100%; height: 265px; overflow: hidden; position: relative; background: #150d04;
-  }
+  #modal-media { width:100%; height:265px; overflow:hidden; position:relative; background:#150d04; }
   #modal-media::after {
-    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 55%;
-    background: linear-gradient(to top, #180e05, transparent);
-    pointer-events: none;
+    content:''; position:absolute; bottom:0; left:0; right:0; height:55%;
+    background:linear-gradient(to top,#180e05,transparent); pointer-events:none;
   }
-  #modal-img {
-    width: 100%; height: 100%; object-fit: cover; display: none;
-    transition: transform 7s ease; transform: scale(1.05);
-  }
-  #modal-overlay.open #modal-img { transform: scale(1); }
+  #modal-img { width:100%; height:100%; object-fit:cover; display:none; transition:transform 7s ease; transform:scale(1.05); }
+  #modal-overlay.open #modal-img { transform:scale(1); }
+  #modal-video { width:100%; height:100%; object-fit:cover; display:none; outline:none; }
+  #modal-iframe { width:100%; height:100%; border:none; display:none; }
+  #modal-ph { width:100%; height:100%; display:none; align-items:center; justify-content:center; background:linear-gradient(135deg,#2a1a0a,#150d04); font-size:4.5rem; }
+  #modal-body { padding:1.6em 2.2em 2.2em; }
+  #modal-date { font-size:0.76rem; letter-spacing:0.28em; color:var(--amber); text-transform:uppercase; margin-bottom:0.3em; }
+  #modal-title { font-family:'Cormorant Garamond',serif; font-size:2rem; color:var(--parchment); font-weight:300; font-style:italic; line-height:1.12; margin-bottom:0.55em; }
+  .ornament { text-align:center; color:var(--amber); font-size:0.85rem; letter-spacing:0.45em; margin:0.6em 0; opacity:0.45; }
+  #modal-desc { color:#c8a87a; font-size:1.05rem; font-weight:300; line-height:1.7; }
+  #modal-close { position:absolute; top:13px; right:16px; background:none; border:none; color:var(--gold); font-size:1.7rem; cursor:pointer; opacity:0.5; transition:opacity 0.2s; z-index:10; line-height:1; }
+  #modal-close:hover { opacity:1; }
 
-  #modal-video {
-    width: 100%; height: 100%; object-fit: cover; display: none;
-    outline: none;
-  }
-  /* YouTube / Vimeo iframe embed */
-  #modal-iframe {
-    width: 100%; height: 100%; border: none; display: none;
-  }
-  #modal-ph {
-    width: 100%; height: 100%; display: none;
-    align-items: center; justify-content: center;
-    background: linear-gradient(135deg, #2a1a0a, #150d04);
-    font-size: 4.5rem;
-  }
-
-  #modal-body { padding: 1.6em 2.2em 2.2em; }
-  #modal-date { font-size: 0.76rem; letter-spacing: 0.28em; color: var(--amber); text-transform: uppercase; margin-bottom: 0.3em; }
-  #modal-title { font-family: 'Cormorant Garamond', serif; font-size: 2rem; color: var(--parchment); font-weight: 300; font-style: italic; line-height: 1.12; margin-bottom: 0.55em; }
-  .ornament { text-align: center; color: var(--amber); font-size: 0.85rem; letter-spacing: 0.45em; margin: 0.6em 0; opacity: 0.45; }
-  #modal-desc { color: #c8a87a; font-size: 1.05rem; font-weight: 300; line-height: 1.7; }
-  #modal-close {
-    position: absolute; top: 13px; right: 16px; background: none; border: none;
-    color: var(--gold); font-size: 1.7rem; cursor: pointer; opacity: 0.5;
-    transition: opacity 0.2s; z-index: 10; line-height: 1;
-  }
-  #modal-close:hover { opacity: 1; }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes pinGlow {
-    0%,100% { box-shadow: 0 0 10px rgba(196,112,90,0.75), 0 0 22px rgba(196,112,90,0.35); }
-    50%      { box-shadow: 0 0 16px rgba(196,112,90,1),    0 0 30px rgba(196,112,90,0.55); }
-  }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
 </style>
 </head>
 <body>
@@ -237,9 +147,8 @@
   <span id="header-title">Our Ankara</span>
   <span id="header-sub">· click a pin to remember ·</span>
 </div>
-
 <div id="hint">drag to explore &nbsp;·&nbsp; scroll to zoom &nbsp;·&nbsp; click the glowing pins</div>
-
+<div id="pin-label"></div>
 <div id="map"></div>
 
 <div id="modal-overlay">
@@ -262,108 +171,78 @@
 
 <script>
 // ================================================================
-// ✏️  MEMORY DATA — edit these to personalise the gift
+// ✏️  MEMORY DATA
 //
-// For each memory you can set ONE of: img, video, or youtube/vimeo
-//
-// img     → direct image URL
-//           Google Drive: https://drive.google.com/uc?export=view&id=FILE_ID
-//           Imgur: right-click image → Copy image address
-//
-// video   → direct video file URL (.mp4 recommended)
+// img     → direct image URL or Imgur link (also works for GIFs)
 //           Google Drive: https://drive.google.com/uc?export=view&id=FILE_ID
 //
-// youtube → YouTube video ID only (the part after ?v=)
-//           e.g. for https://youtube.com/watch?v=dQw4w9WgXcQ → "dQw4w9WgXcQ"
+// youtube → YouTube video ID (the part after ?v=)
+// vimeo   → Vimeo video ID (the number in the URL)
 //
-// vimeo   → Vimeo video ID only (the number in the URL)
+// Leave unused fields as "" — if all empty the emoji shows instead.
 //
-// Leave unused fields as "" or omit them entirely.
-// If all are empty, the emoji is shown instead.
-//
-// lat / lng → right-click on Google Maps → click the coordinates to copy
+// lat/lng → right-click on Google Maps → click the coordinates to copy
 // ================================================================
 const memories = [
   {
-    title:   "Our First Coffee",
-    date:    "March 12, 2024",
-    desc:    "The tiny café where it all began. You ordered something complicated and I pretended I knew exactly what it was. We stayed until closing.",
-    emoji:   "☕",
-    img:     "",       // e.g. "https://drive.google.com/uc?export=view&id=ABC123"
-    video:   "",       // e.g. "https://drive.google.com/uc?export=view&id=ABC123"
-    youtube: "",       // e.g. "dQw4w9WgXcQ"
-    vimeo:   "",       // e.g. "123456789"
-    lat: 39.9208, lng: 32.8541
+    title:'Our First Coffee', date:'March 12, 2024',
+    desc:'The tiny café where it all began. You ordered something complicated and I pretended I knew exactly what it was. We stayed until closing.',
+    emoji:'☕', img:'', youtube:'', vimeo:'',
+    lat:39.9208, lng:32.8541
   },
   {
-    title:   "Anıtkabir Walk",
-    date:    "April 3, 2024",
-    desc:    "We walked the long boulevard in the afternoon light. You were quiet in the way you are when something moves you. I held your hand the whole way back.",
-    emoji:   "🕊️",
-    img: "", video: "", youtube: "", vimeo: "",
-    lat: 39.9252, lng: 32.8358
+    title:'Anıtkabir Walk', date:'April 3, 2024',
+    desc:'We walked the long boulevard in the afternoon light. You were quiet in the way you are when something moves you. I held your hand the whole way back.',
+    emoji:'🕊️', img:'', youtube:'', vimeo:'',
+    lat:39.9252, lng:32.8358
   },
   {
-    title:   "Kızılay in the Rain",
-    date:    "April 19, 2024",
-    desc:    "It started pouring and we ducked under the same awning with strangers. You laughed so hard your eyes watered — or maybe it was the rain.",
-    emoji:   "🌧️",
-    img: "", video: "", youtube: "", vimeo: "",
-    lat: 39.9197, lng: 32.8543
+    title:'Kızılay in the Rain', date:'April 19, 2024',
+    desc:'It started pouring and we ducked under the same awning with strangers. You laughed so hard your eyes watered — or maybe it was the rain.',
+    emoji:'🌧️', img:'', youtube:'', vimeo:'',
+    lat:39.9197, lng:32.8543
   },
   {
-    title:   "Dinner at Hamamönü",
-    date:    "May 8, 2024",
-    desc:    "The old town, the cobblestones, the candlelit table. You looked at me across the mezes and said nothing — but everything.",
-    emoji:   "🕯️",
-    img: "", video: "", youtube: "", vimeo: "",
-    lat: 39.9397, lng: 32.8566
+    title:'Dinner at Hamamönü', date:'May 8, 2024',
+    desc:'The old town, the cobblestones, the candlelit table. You looked at me across the mezes and said nothing — but everything.',
+    emoji:'🕯️', img:'', youtube:'', vimeo:'',
+    lat:39.9397, lng:32.8566
   },
   {
-    title:   "Eymir Lake",
-    date:    "June 22, 2024",
-    desc:    "We rented bikes and made terrible time because we kept stopping to look at the water. The best kind of terrible time.",
-    emoji:   "🚲",
-    img: "", video: "", youtube: "", vimeo: "",
-    lat: 39.8602, lng: 32.7861
+    title:'Eymir Lake', date:'June 22, 2024',
+    desc:'We rented bikes and made terrible time because we kept stopping to look at the water. The best kind of terrible time.',
+    emoji:'🚲', img:'', youtube:'', vimeo:'',
+    lat:39.8602, lng:32.7861
   },
   {
-    title:   "Rooftop Sunset",
-    date:    "July 30, 2024",
-    desc:    "The whole city turned amber that evening. You leaned on the railing and said 'I could stay here forever.' I said 'okay.' I meant it.",
-    emoji:   "🌅",
-    img: "", video: "", youtube: "", vimeo: "",
-    lat: 39.9334, lng: 32.8597
+    title:'Rooftop Sunset', date:'July 30, 2024',
+    desc:"The whole city turned amber that evening. You leaned on the railing and said 'I could stay here forever.' I said 'okay.' I meant it.",
+    emoji:'🌅', img:'', youtube:'', vimeo:'',
+    lat:39.9334, lng:32.8597
   },
   {
-    title:   "Atatürk Forest Farm",
-    date:    "September 14, 2024",
-    desc:    "We got lost twice and neither of us minded. You found a feather. I found a smooth stone. We still have both.",
-    emoji:   "🌿",
-    img: "", video: "", youtube: "", vimeo: "",
-    lat: 39.9425, lng: 32.7983
+    title:'Atatürk Forest Farm', date:'September 14, 2024',
+    desc:'We got lost twice and neither of us minded. You found a feather. I found a smooth stone. We still have both.',
+    emoji:'🌿', img:'', youtube:'', vimeo:'',
+    lat:39.9425, lng:32.7983
   }
 ];
 // ================================================================
 
-let mapInitialised = false;
-let libReady       = false;
-let enterRequested = false;
+let libReady = false, enterRequested = false, mapInitialised = false;
 
 (function loadMapLibre() {
   const s = document.createElement('script');
   s.src = 'https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js';
   s.onload  = () => { libReady = true; if (enterRequested) doEnter(); };
-  s.onerror = () => alert('Could not load the map library. Check your internet connection and refresh.');
+  s.onerror = () => alert('Could not load map library. Check internet connection and refresh.');
   document.head.appendChild(s);
 })();
 
 function enterMap() {
   document.getElementById('intro').classList.add('hidden');
-  if (libReady) setTimeout(doEnter, 1300);
-  else enterRequested = true;
+  if (libReady) setTimeout(doEnter, 1300); else enterRequested = true;
 }
-
 function doEnter() {
   document.getElementById('intro').style.display = 'none';
   if (!mapInitialised) { initMap(); mapInitialised = true; }
@@ -372,37 +251,110 @@ function doEnter() {
   setTimeout(() => document.getElementById('hint').style.opacity = '0', 5500);
 }
 
+// ── Build a small teardrop PNG as a data URI so we can register it
+//    as a MapLibre image sprite — rendered by the GPU, zero drift.
+function makePinImage(fill='#c4705a', stroke='#e8b96a', size=56) {
+  const c = document.createElement('canvas');
+  c.width = c.height = size;
+  const ctx = c.getContext('2d');
+  const cx = size/2, r = size*0.38, tip = size;
+  // teardrop path
+  ctx.beginPath();
+  ctx.arc(cx, r, r, Math.PI, 0);           // top semicircle
+  ctx.quadraticCurveTo(cx+r, r*1.9, cx, tip*0.95); // right curve to tip
+  ctx.quadraticCurveTo(cx-r, r*1.9, cx-r, r);      // left curve back
+  ctx.closePath();
+  // fill gradient
+  const g = ctx.createRadialGradient(cx-r*0.2, r*0.55, 0, cx, r, r);
+  g.addColorStop(0, '#e8a898'); g.addColorStop(1, fill);
+  ctx.fillStyle = g; ctx.fill();
+  // stroke
+  ctx.strokeStyle = stroke; ctx.lineWidth = size*0.04; ctx.stroke();
+  // inner highlight
+  ctx.beginPath(); ctx.arc(cx, r*0.75, r*0.28, 0, Math.PI*2);
+  ctx.fillStyle = 'rgba(255,255,255,0.28)'; ctx.fill();
+  return c;
+}
+
 function initMap() {
   const map = new maplibregl.Map({
-    container: 'map',
-    style: 'https://tiles.openfreemap.org/styles/dark',
-    center: [32.8541, 39.9208],
-    zoom: 13
+    container:'map',
+    style:'https://tiles.openfreemap.org/styles/dark',
+    center:[32.8541, 39.9208],
+    zoom:13
   });
-
   map.addControl(new maplibregl.NavigationControl(), 'bottom-right');
 
-  // ── PIN FIX ──
-  // Add markers only after the map has fully loaded so that
-  // MapLibre has calculated its final projection — this prevents
-  // pins from drifting when zooming in or out.
   map.on('load', () => {
-    memories.forEach((m, i) => {
-      // Wrapper has a fixed pixel size; anchor='bottom' pins the
-      // very bottom-centre of the wrapper to the coordinate.
-      const wrap = document.createElement('div');
-      wrap.className = 'mem-pin-wrap';
-      wrap.innerHTML = `
-        <div class="mem-pin">
-          <div class="pin-lbl">${m.title}</div>
-          <div class="pin-bubble"></div>
-          <div class="pin-tip"></div>
-        </div>`;
-      wrap.addEventListener('click', () => openModal(i));
+    // Register the pin image into MapLibre's sprite system
+    const pinCanvas = makePinImage();
+    map.addImage('memory-pin', pinCanvas, { pixelRatio: 2 });
 
-      new maplibregl.Marker({ element: wrap, anchor: 'bottom' })
-        .setLngLat([m.lng, m.lat])
-        .addTo(map);
+    // Add memories as a GeoJSON source
+    map.addSource('memories', {
+      type:'geojson',
+      data:{
+        type:'FeatureCollection',
+        features: memories.map((m,i) => ({
+          type:'Feature',
+          geometry:{ type:'Point', coordinates:[m.lng, m.lat] },
+          properties:{ id:i, title:m.title }
+        }))
+      }
+    });
+
+    // ── THE KEY FIX ──
+    // Symbol layers are rendered by the GPU as part of the map itself.
+    // They cannot drift because they are projected with the same matrix
+    // as the map tiles — there is no separate DOM element to misalign.
+    map.addLayer({
+      id:'memory-pins',
+      type:'symbol',
+      source:'memories',
+      layout:{
+        'icon-image':'memory-pin',
+        'icon-size':0.55,
+        'icon-anchor':'bottom',          // tip of teardrop = coordinate
+        'icon-allow-overlap':true,
+        'icon-ignore-placement':true
+      }
+    });
+
+    // Glow pulse: animate icon-size with a CSS-style oscillation via
+    // a JS interval that updates the layer paint opacity slightly
+    let t = 0;
+    setInterval(() => {
+      t += 0.05;
+      const glow = 0.85 + 0.15 * Math.sin(t);
+      if (map.getLayer('memory-pins')) {
+        map.setPaintProperty('memory-pins', 'icon-opacity', glow);
+      }
+    }, 40);
+
+    // Hover: show label
+    const label = document.getElementById('pin-label');
+    map.on('mouseenter', 'memory-pins', e => {
+      map.getCanvas().style.cursor = 'pointer';
+      const pt = e.point;
+      label.textContent = e.features[0].properties.title;
+      label.style.left  = pt.x + 'px';
+      label.style.top   = pt.y + 'px';
+      label.classList.add('visible');
+    });
+    map.on('mouseleave', 'memory-pins', () => {
+      map.getCanvas().style.cursor = '';
+      label.classList.remove('visible');
+    });
+    map.on('mousemove', 'memory-pins', e => {
+      const pt = e.point;
+      label.style.left = pt.x + 'px';
+      label.style.top  = pt.y + 'px';
+    });
+
+    // Click: open modal
+    map.on('click', 'memory-pins', e => {
+      const id = e.features[0].properties.id;
+      openModal(id);
     });
 
     document.getElementById('map').classList.add('visible');
@@ -416,34 +368,25 @@ function openModal(id) {
   document.getElementById('modal-title').textContent = m.title;
   document.getElementById('modal-desc').textContent  = m.desc;
 
-  const elImg    = document.getElementById('modal-img');
-  const elVideo  = document.getElementById('modal-video');
-  const elIframe = document.getElementById('modal-iframe');
-  const elPh     = document.getElementById('modal-ph');
+  const elImg = document.getElementById('modal-img');
+  const elVid = document.getElementById('modal-video');
+  const elIfr = document.getElementById('modal-iframe');
+  const elPh  = document.getElementById('modal-ph');
 
-  // Hide everything first; stop any playing video
-  elImg.style.display    = 'none';
-  elVideo.style.display  = 'none';
-  elIframe.style.display = 'none';
-  elPh.style.display     = 'none';
-  elVideo.pause();
-  elVideo.src    = '';
-  elIframe.src   = '';
+  elImg.style.display = elVid.style.display = elIfr.style.display = elPh.style.display = 'none';
+  elVid.pause(); elVid.src = ''; elIfr.src = '';
 
   if (m.youtube) {
-    elIframe.src = `https://www.youtube.com/embed/${m.youtube}?autoplay=0&rel=0`;
-    elIframe.style.display = 'block';
+    elIfr.src = `https://www.youtube.com/embed/${m.youtube}?autoplay=0&rel=0`;
+    elIfr.style.display = 'block';
   } else if (m.vimeo) {
-    elIframe.src = `https://player.vimeo.com/video/${m.vimeo}`;
-    elIframe.style.display = 'block';
-  } else if (m.video) {
-    elVideo.src = m.video;
-    elVideo.style.display = 'block';
+    elIfr.src = `https://player.vimeo.com/video/${m.vimeo}`;
+    elIfr.style.display = 'block';
   } else if (m.img) {
     elImg.src = m.img;
     elImg.style.display = 'block';
   } else {
-    elPh.textContent   = m.emoji;
+    elPh.textContent = m.emoji;
     elPh.style.display = 'flex';
   }
 
@@ -451,11 +394,9 @@ function openModal(id) {
 }
 
 function closeModal() {
-  // Stop video/iframe when closing
-  const elVideo  = document.getElementById('modal-video');
-  const elIframe = document.getElementById('modal-iframe');
-  elVideo.pause(); elVideo.src = '';
-  elIframe.src = '';
+  const elVid = document.getElementById('modal-video');
+  const elIfr = document.getElementById('modal-iframe');
+  elVid.pause(); elVid.src = ''; elIfr.src = '';
   document.getElementById('modal-overlay').classList.remove('open');
 }
 
