@@ -107,43 +107,26 @@
   }
   #hint.visible { opacity: 0.5; }
 
-  /* ── CUSTOM PIN ── */
-  /* FIX: pin wrapper has explicit fixed size so MapLibre anchor is stable */
+  /* ── CUSTOM PIN ──
+     Pure SVG teardrop: viewBox 0 0 28 38, tip at bottom-centre (14,38).
+     MapLibre anchor='bottom' places that exact pixel on the coordinate.
+     subpixelPositioning:true removes rounding — zero drift at any zoom.
+  */
   .mem-pin-wrap {
-    width: 30px;
-    height: 46px;           /* bubble(22) + gap(2) + tip(8) + overflow(14) */
-    position: relative;
-    cursor: pointer;
+    width: 28px; height: 38px;
+    position: relative; cursor: pointer;
   }
-  .mem-pin {
-    position: absolute;
-    bottom: 0; left: 50%;
-    transform: translateX(-50%);
-    display: flex; flex-direction: column; align-items: center;
-  }
-  .pin-bubble {
-    width: 22px; height: 22px;
-    border-radius: 50% 50% 50% 0;
-    transform: rotate(-45deg);
-    background: radial-gradient(circle at 35% 35%, #e8a898, #c4705a);
-    border: 2px solid var(--gold);
-    box-shadow: 0 0 10px rgba(196,112,90,0.75), 0 0 22px rgba(196,112,90,0.35);
-    transition: all 0.3s;
+  .mem-pin-wrap svg {
+    width: 28px; height: 38px; overflow: visible;
+    filter: drop-shadow(0 0 5px rgba(196,112,90,0.65));
+    transition: filter 0.3s;
     animation: pinGlow 2.5s ease-in-out infinite;
-    flex-shrink: 0;
   }
-  .mem-pin-wrap:hover .pin-bubble {
-    background: radial-gradient(circle at 35% 35%, #f5ede0, #e8b96a);
-    box-shadow: 0 0 16px rgba(232,185,106,1), 0 0 32px rgba(232,185,106,0.5);
-    transform: rotate(-45deg) scale(1.2);
+  .mem-pin-wrap:hover svg {
+    filter: drop-shadow(0 0 13px rgba(232,185,106,0.95));
   }
-  .pin-tip {
-    width: 2px; height: 8px; background: var(--rose);
-    margin-top: -1px; transition: background 0.3s; flex-shrink: 0;
-  }
-  .mem-pin-wrap:hover .pin-tip { background: var(--gold); }
   .pin-lbl {
-    position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%);
+    position: absolute; bottom: 44px; left: 50%; transform: translateX(-50%);
     background: rgba(19,11,5,0.92); border: 1px solid rgba(200,129,58,0.45);
     color: var(--parchment); font-family: 'Cormorant Garamond', serif;
     font-style: italic; font-size: 12px; white-space: nowrap;
@@ -388,19 +371,33 @@ function initMap() {
   // pins from drifting when zooming in or out.
   map.on('load', () => {
     memories.forEach((m, i) => {
-      // Wrapper has a fixed pixel size; anchor='bottom' pins the
-      // very bottom-centre of the wrapper to the coordinate.
       const wrap = document.createElement('div');
       wrap.className = 'mem-pin-wrap';
+      // SVG teardrop: circle top, pointed tip at bottom-centre (14,38).
+      // This means anchor:'bottom' locks the tip pixel to the coordinate.
+      // The inner highlight circle gives the same warm rose-gold look.
       wrap.innerHTML = `
-        <div class="mem-pin">
-          <div class="pin-lbl">${m.title}</div>
-          <div class="pin-bubble"></div>
-          <div class="pin-tip"></div>
-        </div>`;
+        <div class="pin-lbl">${m.title}</div>
+        <svg viewBox="0 0 28 38" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="pg${i}" cx="38%" cy="32%" r="60%">
+              <stop offset="0%" stop-color="#e8a898"/>
+              <stop offset="100%" stop-color="#c4705a"/>
+            </radialGradient>
+          </defs>
+          <!-- teardrop path: circle top, pointed bottom -->
+          <path d="M14 1 C6.3 1 1 7 1 13.5 C1 22 14 37 14 37 C14 37 27 22 27 13.5 C27 7 21.7 1 14 1 Z"
+                fill="url(#pg${i})" stroke="#e8b96a" stroke-width="1.5"/>
+          <!-- inner highlight dot -->
+          <circle cx="14" cy="13" r="4.5" fill="rgba(255,255,255,0.25)"/>
+        </svg>`;
       wrap.addEventListener('click', () => openModal(i));
 
-      new maplibregl.Marker({ element: wrap, anchor: 'bottom' })
+      new maplibregl.Marker({
+        element: wrap,
+        anchor: 'bottom',          // tip of SVG (bottom-centre) = coordinate
+        subpixelPositioning: true  // no rounding → no drift when zooming
+      })
         .setLngLat([m.lng, m.lat])
         .addTo(map);
     });
