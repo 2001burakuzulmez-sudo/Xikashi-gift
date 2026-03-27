@@ -57,7 +57,11 @@
   /* ── MAP ── */
   #map { width:100vw; height:100vh; opacity:0; transition:opacity 1.2s ease; z-index:1; cursor:pointer; }
   #map.visible { opacity:1; }
-  .maplibregl-ctrl-attrib { background:rgba(19,11,5,0.8)!important; color:#7a5535!important; font-size:9px!important; }
+  /* Apply warm dark filter ONLY to the tile canvas — pins are rendered
+     on the same canvas so we keep the filter off the overlay layer */
+  #map canvas {
+    filter: invert(1) hue-rotate(155deg) saturate(0.35) brightness(0.5) sepia(0.5);
+  }
   .maplibregl-ctrl-attrib a { color:#9a6838!important; }
   .maplibregl-ctrl-group { background:rgba(26,14,6,0.92)!important; border:1px solid #3a2010!important; box-shadow:none!important; }
   .maplibregl-ctrl-group button { background-color:transparent!important; }
@@ -251,35 +255,36 @@ function doEnter() {
   setTimeout(() => document.getElementById('hint').style.opacity = '0', 5500);
 }
 
-// ── Build a small teardrop PNG as a data URI so we can register it
-//    as a MapLibre image sprite — rendered by the GPU, zero drift.
-function makePinImage(fill='#c4705a', stroke='#e8b96a', size=56) {
+// The map canvas has a CSS filter: invert+hue-rotate+sepia applied to it.
+// Pins are drawn on that same canvas, so their colours get filtered too.
+// We pre-invert the pin colours here so they come out rose-gold after filtering.
+// Pre-filter values chosen by trial: these render as warm rose/gold post-filter.
+function makePinImage() {
+  const size = 56;
   const c = document.createElement('canvas');
   c.width = c.height = size;
   const ctx = c.getContext('2d');
   const cx = size/2, r = size*0.38, tip = size;
-  // teardrop path
   ctx.beginPath();
-  ctx.arc(cx, r, r, Math.PI, 0);           // top semicircle
-  ctx.quadraticCurveTo(cx+r, r*1.9, cx, tip*0.95); // right curve to tip
-  ctx.quadraticCurveTo(cx-r, r*1.9, cx-r, r);      // left curve back
+  ctx.arc(cx, r, r, Math.PI, 0);
+  ctx.quadraticCurveTo(cx+r, r*1.9, cx, tip*0.95);
+  ctx.quadraticCurveTo(cx-r, r*1.9, cx-r, r);
   ctx.closePath();
-  // fill gradient
+  // Use a blue-green pre-inverted gradient — post-filter this becomes rose/amber
   const g = ctx.createRadialGradient(cx-r*0.2, r*0.55, 0, cx, r, r);
-  g.addColorStop(0, '#e8a898'); g.addColorStop(1, fill);
+  g.addColorStop(0, '#a05060');  // pre-inverted of rose-light
+  g.addColorStop(1, '#3b8fc5');  // pre-inverted of amber-rose
   ctx.fillStyle = g; ctx.fill();
-  // stroke
-  ctx.strokeStyle = stroke; ctx.lineWidth = size*0.04; ctx.stroke();
-  // inner highlight
+  ctx.strokeStyle = '#174896'; ctx.lineWidth = size*0.04; ctx.stroke();
   ctx.beginPath(); ctx.arc(cx, r*0.75, r*0.28, 0, Math.PI*2);
-  ctx.fillStyle = 'rgba(255,255,255,0.28)'; ctx.fill();
+  ctx.fillStyle = 'rgba(0,0,0,0.28)'; ctx.fill();
   return c;
 }
 
 function initMap() {
   const map = new maplibregl.Map({
     container:'map',
-    style:'https://tiles.openfreemap.org/styles/dark',
+    style:'https://tiles.openfreemap.org/styles/liberty',
     center:[32.8541, 39.9208],
     zoom:13
   });
