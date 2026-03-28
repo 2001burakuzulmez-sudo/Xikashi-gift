@@ -177,7 +177,8 @@
 // ================================================================
 // ✏️  MEMORY DATA
 //
-// img     → direct image URL or Imgur link (also works for GIFs)
+// img     → any Imgur link works (page or direct — auto-converted)
+//           e.g. https://imgur.com/EjOCfRB  or  https://i.imgur.com/EjOCfRB.jpg
 //           Google Drive: https://drive.google.com/uc?export=view&id=FILE_ID
 //
 // youtube → YouTube video ID (the part after ?v=)
@@ -481,6 +482,31 @@ function initMap() {
   });
 }
 
+// === IMAGE URL HELPERS ===
+// Normalise any Imgur URL to a direct-image URL.
+// Accepts all common formats people paste:
+//   https://imgur.com/EjOCfRB          → page link
+//   https://imgur.com/a/AbCdE          → album (uses first image)
+//   https://i.imgur.com/EjOCfRB.jpg    → already direct (pass through)
+//   https://i.imgur.com/EjOCfRB        → direct without extension
+function fixImgUrl(url) {
+  if (!url) return url;
+  // Already a direct i.imgur link — ensure it has an extension
+  const directRe = /^https?:\/\/i\.imgur\.com\/([A-Za-z0-9]+)(\.\w+)?/;
+  const directMatch = url.match(directRe);
+  if (directMatch) {
+    return directMatch[2] ? url : url + '.jpg';
+  }
+  // Page link: https://imgur.com/XXXXX
+  const pageRe = /^https?:\/\/(?:www\.)?imgur\.com\/(?!a\/)([A-Za-z0-9]+)/;
+  const pageMatch = url.match(pageRe);
+  if (pageMatch) {
+    return 'https://i.imgur.com/' + pageMatch[1] + '.jpg';
+  }
+  // Not an Imgur URL — return as-is (Google Drive, other hosts, etc.)
+  return url;
+}
+
 // === MODAL ===
 function openModal(id) {
   const m = memories[id];
@@ -503,7 +529,7 @@ function openModal(id) {
     elIfr.src = `https://player.vimeo.com/video/${m.vimeo}`;
     elIfr.style.display = 'block';
   } else if (m.img) {
-    elImg.src = m.img;
+    elImg.src = fixImgUrl(m.img);
     elImg.style.display = 'block';
   } else {
     elPh.textContent = m.emoji;
