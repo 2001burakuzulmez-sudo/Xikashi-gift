@@ -177,9 +177,10 @@
 // ================================================================
 // ✏️  MEMORY DATA
 //
-// img     → any Imgur link works (page or direct — auto-converted)
+// img     → Imgur image link (page or direct — auto-converted)
 //           e.g. https://imgur.com/EjOCfRB  or  https://i.imgur.com/EjOCfRB.jpg
-//           Google Drive: https://drive.google.com/uc?export=view&id=FILE_ID
+// vid     → Imgur video link (same formats — auto-converted to .mp4)
+//           e.g. https://imgur.com/AbCdEfG  or  https://i.imgur.com/AbCdEfG.mp4
 //
 // youtube → YouTube video ID (the part after ?v=)
 // vimeo   → Vimeo video ID (the number in the URL)
@@ -192,145 +193,145 @@ const memories = [
   {
     title:'Caffé Di Toeé', date:'March 12, 2024',
     desc:'The tiny café where it all began. You ordered something complicated and I pretended I knew exactly what it was. We stayed until closing.',
-    emoji:'☕', img:'https://imgur.com/EjOCfRB', youtube:'', vimeo:'',
+    emoji:'☕', img:'https://imgur.com/EjOCfRB', vid:'', youtube:'', vimeo:'',
     lat:39.89474154717884, lng:32.70440886390691
   },
   {
     title:'Mackbear', date:'April 3, 2024',
     desc:'We walked the long boulevard in the afternoon light. You were quiet in the way you are when something moves you. I held your hand the whole way back.',
-    emoji:'🕊️', img:'https://imgur.com/Il9t6Bc', youtube:'', vimeo:'',
+    emoji:'🕊️', img:'https://imgur.com/Il9t6Bc', vid:'', youtube:'', vimeo:'',
     lat:39.92411946172213, lng:32.805681567243234
   },
   {
     title:'The Stock', date:'April 19, 2024',
     desc:'It started pouring and we ducked under the same awning with strangers. You laughed so hard your eyes watered — or maybe it was the rain.',
-    emoji:'🌧️', img:'https://imgur.com/aPCTSRu', youtube:'', vimeo:'',
+    emoji:'🌧️', img:'https://imgur.com/aPCTSRu', vid:'', youtube:'', vimeo:'',
     lat:39.92211270648161, lng:32.82564492540104
   },
   {
     title:'Perla Cafe', date:'May 8, 2024',
     desc:'The old town, the cobblestones, the candlelit table. You looked at me across the mezes and said nothing — but everything.',
-    emoji:'🕯️', img:'https://imgur.com/Jh3yUyE', youtube:'', vimeo:'',
+    emoji:'🕯️', img:'https://imgur.com/Jh3yUyE', vid:'', youtube:'', vimeo:'',
     lat:39.922494783770915, lng:32.828615827848175
   },
   {
     title:'Goodluck PS5', date:'June 22, 2024',
     desc:'We rented bikes and made terrible time because we kept stopping to look at the water. The best kind of terrible time.',
-    emoji:'🚲', img:'https://imgur.com/7vdx6B8', youtube:'', vimeo:'',
+    emoji:'🚲', img:'https://imgur.com/7vdx6B8', vid:'', youtube:'', vimeo:'',
     lat:39.922246272571485, lng:32.8288876069118
   },
   {
     title:'Skall', date:'July 30, 2024',
     desc:"The whole city turned amber that evening. You leaned on the railing and said 'I could stay here forever.' I said 'okay.' I meant it.",
-    emoji:'🌅', img:'https://imgur.com/OY2jS2I', youtube:'', vimeo:'',
+    emoji:'🌅', img:'https://imgur.com/OY2jS2I', vid:'', youtube:'', vimeo:'',
     lat:39.92025519700155, lng:32.82950789693637
   },
   {
     title:'Ochi', date:'September 14, 2024',
     desc:'We got lost twice and neither of us minded. You found a feather. I found a smooth stone. We still have both.',
-    emoji:'🌿', img:'https://imgur.com/6JM0lz9', youtube:'', vimeo:'',
+    emoji:'🌿', img:'https://imgur.com/6JM0lz9', vid:'', youtube:'', vimeo:'',
     lat:39.88834964730867, lng:32.68716642156824
   },
   {
     title:'Maydonoz Döner', date:'September 14, 2024',
     desc:'We got lost twice and neither of us minded. You found a feather. I found a smooth stone. We still have both.',
-    emoji:'🌿', img:'https://imgur.com/9bsFUqU', youtube:'', vimeo:'',
+    emoji:'🌿', img:'https://imgur.com/9bsFUqU', vid:'', youtube:'', vimeo:'',
     lat:39.896400458302764, lng:32.704573368739645
   },
   {
     title:'Colombia', date:'September 14, 2024',
     desc:'We got lost twice and neither of us minded. You found a feather. I found a smooth stone. We still have both.',
-    emoji:'☕', img:'https://imgur.com/HjevdoY', youtube:'', vimeo:'',
+    emoji:'☕', img:'https://imgur.com/HjevdoY', vid:'', youtube:'', vimeo:'',
     lat:39.968470697682676, lng:32.717106297212986
   },
   {
     title:'Chinese Secret\'s', date:'September 14, 2024',
     desc:'We got lost twice and neither of us minded. You found a feather. I found a smooth stone. We still have both.',
-    emoji:'🌿', img:'https://imgur.com/7buMSp5', youtube:'', vimeo:'',
+    emoji:'🌿', img:'https://imgur.com/7buMSp5', vid:'', youtube:'', vimeo:'',
     lat:39.904344087769786, lng:32.70774906206882
   },
   {
     title:'TOBB ETÜ Teknoloji merkezi', date:'September 14, 2024',
     desc:'We got lost twice and neither of us minded. You found a feather. I found a smooth stone. We still have both.',
-    emoji:'🌿', img:'', youtube:'', vimeo:'',
+    emoji:'🌿', img:'', vid:'', youtube:'', vimeo:'',
     lat:39.91871165897259, lng:32.797652438764636
   },
   {
     title:'TOBB ETÜ Mimarlık Fakültesi', date:'September 14, 2024',
     desc:'We got lost twice and neither of us minded. You found a feather. I found a smooth stone. We still have both.',
-    emoji:'🌿', img:'https://imgur.com/Ov33XGw', youtube:'', vimeo:'',
+    emoji:'🌿', img:'https://imgur.com/Ov33XGw', vid:'', youtube:'', vimeo:'',
     lat:39.91987351853455, lng:32.79730455247129
   },
   {
     title:'Armada Yemek Katı', date:'September 14, 2024',
     desc:'We got lost twice and neither of us minded. You found a feather. I found a smooth stone. We still have both.',
-    emoji:'🌿', img:'https://imgur.com/LNturuT', youtube:'', vimeo:'',
+    emoji:'🌿', img:'https://imgur.com/LNturuT', vid:'', youtube:'', vimeo:'',
     lat:39.91226447627906, lng:32.809579167168614
   },
   {
     title:'Arabica', date:'September 14, 2024',
     desc:'We got lost twice and neither of us minded. You found a feather. I found a smooth stone. We still have both.',
-    emoji:'☕', img:'', youtube:'', vimeo:'',
+    emoji:'☕', img:'', vid:'', youtube:'', vimeo:'',
     lat:39.91103791886786, lng:32.80826286536064
   },
   {
     title:'Krispy Kreme', date:'September 14, 2024',
     desc:'We got lost twice and neither of us minded. You found a feather. I found a smooth stone. We still have both.',
-    emoji:'🌿', img:'', youtube:'', vimeo:'',
+    emoji:'🌿', img:'', vid:'', youtube:'', vimeo:'',
     lat:39.911204996405175, lng:32.809983614516376
   },
   {
     title:'Arabica', date:'September 14, 2024',
     desc:'We got lost twice and neither of us minded. You found a feather. I found a smooth stone. We still have both.',
-    emoji:'☕', img:'', youtube:'', vimeo:'',
+    emoji:'☕', img:'', vid:'', youtube:'', vimeo:'',
     lat:39.887556642865995, lng:32.68567790919212
   },
   {
     title:'Arabica', date:'September 14, 2024',
     desc:'We got lost twice and neither of us minded. You found a feather. I found a smooth stone. We still have both.',
-    emoji:'☕', img:'https://imgur.com/380JHgw', youtube:'', vimeo:'',
+    emoji:'☕', img:'https://imgur.com/380JHgw', vid:'', youtube:'', vimeo:'',
     lat:39.88209985118263, lng:32.68627024449873
   },
   {
     title:'Double Zero', date:'September 14, 2024',
     desc:'We got lost twice and neither of us minded. You found a feather. I found a smooth stone. We still have both.',
-    emoji:'🌿', img:'https://imgur.com/vLj5iIx', youtube:'', vimeo:'',
+    emoji:'🌿', img:'https://imgur.com/vLj5iIx', vid:'', youtube:'', vimeo:'',
     lat:39.8962983627199, lng:32.705473228222075
   },
   {
     title:'A4 kahve', date:'September 14, 2024',
     desc:'We got lost twice and neither of us minded. You found a feather. I found a smooth stone. We still have both.',
-    emoji:'☕', img:'https://imgur.com/rbL4lVE', youtube:'', vimeo:'',
+    emoji:'☕', img:'https://imgur.com/rbL4lVE', vid:'', youtube:'', vimeo:'',
     lat:39.89543834662111, lng:32.7058115472358
   },
   {
     title:'Coffee Lab', date:'September 14, 2024',
     desc:'We got lost twice and neither of us minded. You found a feather. I found a smooth stone. We still have both.',
-    emoji:'☕', img:'', youtube:'', vimeo:'',
+    emoji:'☕', img:'', vid:'', youtube:'', vimeo:'',
     lat:39.89397439096276, lng:32.703995901870265
   },
   {
     title:'Cajun Corner Experience', date:'September 14, 2024',
     desc:'We got lost twice and neither of us minded. You found a feather. I found a smooth stone. We still have both.',
-    emoji:'🌿', img:'https://imgur.com/cLh2dH7', youtube:'', vimeo:'',
+    emoji:'🌿', img:'https://imgur.com/cLh2dH7', vid:'', youtube:'', vimeo:'',
     lat:39.89532671691713, lng:32.704126280230895
   },
   {
     title:'Greenwich Coffee', date:'September 14, 2024',
     desc:'We got lost twice and neither of us minded. You found a feather. I found a smooth stone. We still have both.',
-    emoji:'☕', img:'', youtube:'', vimeo:'',
+    emoji:'☕', img:'', vid:'', youtube:'', vimeo:'',
     lat:39.905714945781966, lng:32.80345633392684
   },
   {
     title:'Kaffehause', date:'September 14, 2024',
     desc:'We got lost twice and neither of us minded. You found a feather. I found a smooth stone. We still have both.',
-    emoji:'☕', img:'', youtube:'', vimeo:'',
+    emoji:'☕', img:'', vid:'', youtube:'', vimeo:'',
     lat:39.926855244622885, lng:32.82670003930519
   },
   {
     title:'Thinke Kütüphane', date:'September 14, 2024',
     desc:'We got lost twice and neither of us minded. You found a feather. I found a smooth stone. We still have both.',
-    emoji:'🌿', img:'https://imgur.com/F6w6EQR', youtube:'', vimeo:'',
+    emoji:'🌿', img:'https://imgur.com/F6w6EQR', vid:'', youtube:'', vimeo:'',
     lat:39.89583150391216, lng:32.7019364265885
   }
 ];
@@ -482,28 +483,20 @@ function initMap() {
   });
 }
 
-// === IMAGE URL HELPERS ===
-// Normalise any Imgur URL to a direct-image URL.
-// Accepts all common formats people paste:
-//   https://imgur.com/EjOCfRB          → page link
-//   https://imgur.com/a/AbCdE          → album (uses first image)
-//   https://i.imgur.com/EjOCfRB.jpg    → already direct (pass through)
-//   https://i.imgur.com/EjOCfRB        → direct without extension
-function fixImgUrl(url) {
+// === IMGUR URL HELPER ===
+// Converts any Imgur URL (page link or direct) to a direct-file URL.
+// ext should be 'jpg' for images, 'mp4' for videos.
+function fixImgurUrl(url, ext) {
   if (!url) return url;
-  // Already a direct i.imgur link — ensure it has an extension
+  // Already a direct i.imgur link — ensure correct extension
   const directRe = /^https?:\/\/i\.imgur\.com\/([A-Za-z0-9]+)(\.\w+)?/;
-  const directMatch = url.match(directRe);
-  if (directMatch) {
-    return directMatch[2] ? url : url + '.jpg';
-  }
+  const dm = url.match(directRe);
+  if (dm) return 'https://i.imgur.com/' + dm[1] + '.' + ext;
   // Page link: https://imgur.com/XXXXX
   const pageRe = /^https?:\/\/(?:www\.)?imgur\.com\/(?!a\/)([A-Za-z0-9]+)/;
-  const pageMatch = url.match(pageRe);
-  if (pageMatch) {
-    return 'https://i.imgur.com/' + pageMatch[1] + '.jpg';
-  }
-  // Not an Imgur URL — return as-is (Google Drive, other hosts, etc.)
+  const pm = url.match(pageRe);
+  if (pm) return 'https://i.imgur.com/' + pm[1] + '.' + ext;
+  // Not Imgur — return as-is
   return url;
 }
 
@@ -528,8 +521,11 @@ function openModal(id) {
   } else if (m.vimeo) {
     elIfr.src = `https://player.vimeo.com/video/${m.vimeo}`;
     elIfr.style.display = 'block';
+  } else if (m.vid) {
+    elVid.src = fixImgurUrl(m.vid, 'mp4');
+    elVid.style.display = 'block';
   } else if (m.img) {
-    elImg.src = fixImgUrl(m.img);
+    elImg.src = fixImgurUrl(m.img, 'jpg');
     elImg.style.display = 'block';
   } else {
     elPh.textContent = m.emoji;
