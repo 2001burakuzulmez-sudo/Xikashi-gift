@@ -55,7 +55,7 @@
   .intro-btn:hover::before { transform:translateX(0); }
 
   /* ── MAP ── */
-  #map { width:100vw; height:100vh; opacity:0; transition:opacity 1.2s ease; z-index:1; cursor:pointer; }
+  #map { width:100vw; height:100vh; opacity:0; transition:opacity 1.2s ease; position:relative; z-index:1; cursor:pointer; }
   #map.visible { opacity:1; }
   /* Apply warm dark filter ONLY to the tile canvas — pins are rendered
      on the same canvas so we keep the filter off the overlay layer */
@@ -192,7 +192,7 @@ const memories = [
     title:'Our First Coffee', date:'March 12, 2024',
     desc:'The tiny café where it all began. You ordered something complicated and I pretended I knew exactly what it was. We stayed until closing.',
     emoji:'☕', img:'', youtube:'', vimeo:'',
-    lat:39.8947, lng:32.7044
+    lat:39.9208, lng:32.8541
   },
   {
     title:'Anıtkabir Walk', date:'April 3, 2024',
@@ -229,7 +229,7 @@ const memories = [
     desc:'We got lost twice and neither of us minded. You found a feather. I found a smooth stone. We still have both.',
     emoji:'🌿', img:'', youtube:'', vimeo:'',
     lat:39.9425, lng:32.7983
-  },
+  }
 ];
 // ================================================================
 
@@ -290,77 +290,90 @@ function initMap() {
   });
   map.addControl(new maplibregl.NavigationControl(), 'bottom-right');
 
+  map.on('error', e => {
+    console.warn('MapLibre error:', e.error && e.error.message || e);
+  });
+
   map.on('load', () => {
-    // Register the pin image into MapLibre's sprite system
-    const pinCanvas = makePinImage();
-    map.addImage('memory-pin', pinCanvas, { pixelRatio: 2 });
+    try {
+      // Register the pin image — extract ImageData from the canvas
+      // for maximum compatibility across MapLibre versions
+      const pinCanvas = makePinImage();
+      const pinCtx = pinCanvas.getContext('2d');
+      const pinData = pinCtx.getImageData(0, 0, pinCanvas.width, pinCanvas.height);
+      map.addImage('memory-pin', {
+        width: pinCanvas.width,
+        height: pinCanvas.height,
+        data: pinData.data
+      }, { pixelRatio: 2 });
 
-    // Add memories as a GeoJSON source
-    map.addSource('memories', {
-      type:'geojson',
-      data:{
-        type:'FeatureCollection',
-        features: memories.map((m,i) => ({
-          type:'Feature',
-          geometry:{ type:'Point', coordinates:[m.lng, m.lat] },
-          properties:{ id:i, title:m.title }
-        }))
-      }
-    });
+      // Add memories as a GeoJSON source
+      map.addSource('memories', {
+        type:'geojson',
+        data:{
+          type:'FeatureCollection',
+          features: memories.map((m,i) => ({
+            type:'Feature',
+            geometry:{ type:'Point', coordinates:[m.lng, m.lat] },
+            properties:{ id:i, title:m.title }
+          }))
+        }
+      });
 
-    // ── THE KEY FIX ──
-    // Symbol layers are rendered by the GPU as part of the map itself.
-    // They cannot drift because they are projected with the same matrix
-    // as the map tiles — there is no separate DOM element to misalign.
-    map.addLayer({
-      id:'memory-pins',
-      type:'symbol',
-      source:'memories',
-      layout:{
-        'icon-image':'memory-pin',
-        'icon-size':0.55,
-        'icon-anchor':'bottom',          // tip of teardrop = coordinate
-        'icon-allow-overlap':true,
-        'icon-ignore-placement':true
-      }
-    });
+      // Symbol layers are GPU-rendered as part of the map canvas itself.
+      // They cannot drift because they share the same projection matrix
+      // as the tiles — there is no separate DOM element to misalign.
+      map.addLayer({
+        id:'memory-pins',
+        type:'symbol',
+        source:'memories',
+        layout:{
+          'icon-image':'memory-pin',
+          'icon-size':0.55,
+          'icon-anchor':'bottom',
+          'icon-allow-overlap':true,
+          'icon-ignore-placement':true
+        }
+      });
 
-    // Glow pulse: animate icon-size with a CSS-style oscillation via
-    // a JS interval that updates the layer paint opacity slightly
-    let t = 0;
-    setInterval(() => {
-      t += 0.05;
-      const glow = 0.85 + 0.15 * Math.sin(t);
-      if (map.getLayer('memory-pins')) {
-        map.setPaintProperty('memory-pins', 'icon-opacity', glow);
-      }
-    }, 40);
+      // Glow pulse via animated icon-opacity
+      let t = 0;
+      setInterval(() => {
+        t += 0.05;
+        const glow = 0.85 + 0.15 * Math.sin(t);
+        if (map.getLayer('memory-pins')) {
+          map.setPaintProperty('memory-pins', 'icon-opacity', glow);
+        }
+      }, 40);
 
-    // Hover: show label
-    const label = document.getElementById('pin-label');
-    map.on('mouseenter', 'memory-pins', e => {
-      map.getCanvas().style.cursor = 'pointer';
-      const pt = e.point;
-      label.textContent = e.features[0].properties.title;
-      label.style.left  = pt.x + 'px';
-      label.style.top   = pt.y + 'px';
-      label.classList.add('visible');
-    });
-    map.on('mouseleave', 'memory-pins', () => {
-      map.getCanvas().style.cursor = '';
-      label.classList.remove('visible');
-    });
-    map.on('mousemove', 'memory-pins', e => {
-      const pt = e.point;
-      label.style.left = pt.x + 'px';
-      label.style.top  = pt.y + 'px';
-    });
+      // Hover: show label
+      const label = document.getElementById('pin-label');
+      map.on('mouseenter', 'memory-pins', e => {
+        map.getCanvas().style.cursor = 'pointer';
+        const pt = e.point;
+        label.textContent = e.features[0].properties.title;
+        label.style.left  = pt.x + 'px';
+        label.style.top   = pt.y + 'px';
+        label.classList.add('visible');
+      });
+      map.on('mouseleave', 'memory-pins', () => {
+        map.getCanvas().style.cursor = '';
+        label.classList.remove('visible');
+      });
+      map.on('mousemove', 'memory-pins', e => {
+        const pt = e.point;
+        label.style.left = pt.x + 'px';
+        label.style.top  = pt.y + 'px';
+      });
 
-    // Click: open modal
-    map.on('click', 'memory-pins', e => {
-      const id = e.features[0].properties.id;
-      openModal(id);
-    });
+      // Click: open modal
+      map.on('click', 'memory-pins', e => {
+        const id = e.features[0].properties.id;
+        openModal(id);
+      });
+    } catch(err) {
+      console.error('Map init error:', err);
+    }
 
     document.getElementById('map').classList.add('visible');
   });
