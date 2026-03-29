@@ -33,7 +33,7 @@
   /* vignette */
   body::after {
     content:''; position:fixed; inset:0; pointer-events:none; z-index:499;
-    background:radial-gradient(ellipse at center, transparent 50%, rgba(34,43,49,0.65) 100%);
+    background:radial-gradient(ellipse at center, transparent 60%, rgba(8,3,1,0.4) 100%);
   }
 
   /* ── INTRO ── */
@@ -67,7 +67,7 @@
   /* Apply warm dark filter ONLY to the tile canvas — pins are rendered
      on the same canvas so we keep the filter off the overlay layer */
   #map canvas {
-    filter: invert(1) hue-rotate(160deg) saturate(0.12) brightness(0.45) sepia(0.08);
+    filter: invert(1) hue-rotate(160deg) saturate(0.25) brightness(0.7) sepia(0.05);
   }
   .maplibregl-ctrl-attrib a { color:#55666e!important; }
   .maplibregl-ctrl-group { background:rgba(34,43,49,0.92)!important; border:1px solid var(--grey-light)!important; box-shadow:none!important; }
@@ -409,11 +409,13 @@ function makePinImage() {
   ctx.quadraticCurveTo(cx-r, r*1.9, cx-r, r);
   ctx.closePath();
   // Use pre-inverted red tones — post-filter these become vivid reds
+  // Filter: invert(1) hue-rotate(160deg) saturate(0.25) brightness(0.7)
+  // Need very vivid cyan inputs so saturation survives
   const g = ctx.createRadialGradient(cx-r*0.2, r*0.55, 0, cx, r, r);
-  g.addColorStop(0, '#1dddd9');  // pre-inverted → renders as #e22227 post-filter
-  g.addColorStop(1, '#38f7f4');  // pre-inverted → renders as #c7080c post-filter
+  g.addColorStop(0, '#00ffee');  // vivid cyan → red post-filter
+  g.addColorStop(1, '#00ccbb');  // slightly darker cyan → dark red post-filter
   ctx.fillStyle = g; ctx.fill();
-  ctx.strokeStyle = '#93fefe'; ctx.lineWidth = size*0.04; ctx.stroke();
+  ctx.strokeStyle = '#00aa99'; ctx.lineWidth = size*0.04; ctx.stroke();
   ctx.beginPath(); ctx.arc(cx, r*0.75, r*0.28, 0, Math.PI*2);
   ctx.fillStyle = 'rgba(0,0,0,0.28)'; ctx.fill();
   return c;
