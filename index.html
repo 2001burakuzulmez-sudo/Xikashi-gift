@@ -64,17 +64,11 @@
   /* ── MAP ── */
   #map { width:100vw; height:100vh; opacity:0; transition:opacity 1.2s ease; position:relative; z-index:1; cursor:pointer; }
   #map.visible { opacity:1; }
-  /* CSS filter darkens & desaturates the tile canvas to grey tones.
-     Pins use DOM markers (outside the canvas) so they keep true colors. */
+  /* CSS filter darkens the tile canvas. High saturate(2) ensures pre-inverted
+     pin colors survive inversion and render as vivid reds post-filter. */
   #map canvas {
-    filter: invert(1) hue-rotate(160deg) saturate(0.25) brightness(0.7) sepia(0.05);
+    filter: invert(1) hue-rotate(160deg) saturate(2) brightness(0.8);
   }
-  /* Pin markers — DOM elements, not affected by canvas filter */
-  .pin-marker {
-    width:28px; height:40px; cursor:pointer; transition: transform 0.2s;
-    filter: drop-shadow(0 3px 6px rgba(0,0,0,0.5));
-  }
-  .pin-marker:hover { transform:scale(1.2); }
   .maplibregl-ctrl-attrib a { color:#55666e!important; }
   .maplibregl-ctrl-group { background:rgba(34,43,49,0.92)!important; border:1px solid var(--grey-light)!important; box-shadow:none!important; }
   .maplibregl-ctrl-group button { background-color:transparent!important; }
@@ -399,8 +393,10 @@ function doEnter() {
   setTimeout(() => document.getElementById('hint').style.opacity = '0', 5500);
 }
 
-// makePinImage is no longer used — pins are SVG DOM markers now.
-// Kept for reference.
+// Pins are GeoJSON symbol layers (GPU-rendered, no drift).
+// Colors are pre-inverted to compensate for the CSS filter on the canvas.
+// Computed via brute-force: these inputs produce palette reds post-filter.
+// Filter: invert(1) hue-rotate(160deg) saturate(2) brightness(0.8)
 function makePinImage() {
   const size = 56;
   const c = document.createElement('canvas');
@@ -412,12 +408,15 @@ function makePinImage() {
   ctx.quadraticCurveTo(cx+r, r*1.9, cx, tip*0.95);
   ctx.quadraticCurveTo(cx-r, r*1.9, cx-r, r);
   ctx.closePath();
-  // Direct red colors — no CSS filter to fight anymore
+  // Pre-inverted colors (computed):
+  //   #f08d69 → renders as #e22227 (light-red) post-filter
+  //   #ffe10f → renders as #c7090c (red) post-filter
   const g = ctx.createRadialGradient(cx-r*0.2, r*0.55, 0, cx, r, r);
-  g.addColorStop(0, '#e22227');  // light-red from palette
-  g.addColorStop(1, '#c7080c');  // red from palette
+  g.addColorStop(0, '#f08d69');
+  g.addColorStop(1, '#ffe10f');
   ctx.fillStyle = g; ctx.fill();
-  ctx.strokeStyle = '#6c0103'; ctx.lineWidth = size*0.04; ctx.stroke();
+  // Border: #fffc63 → renders as #6c0103 (dark-red) post-filter
+  ctx.strokeStyle = '#fffc63'; ctx.lineWidth = size*0.04; ctx.stroke();
   ctx.beginPath(); ctx.arc(cx, r*0.75, r*0.28, 0, Math.PI*2);
   ctx.fillStyle = 'rgba(0,0,0,0.28)'; ctx.fill();
   return c;
@@ -437,65 +436,79 @@ function initMap() {
   });
 
   map.on('load', () => {
-    // Create SVG pin as a data URI for DOM markers
-    const pinSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 40" width="28" height="40">
-      <defs>
-        <radialGradient id="pg" cx="45%" cy="35%" r="50%">
-          <stop offset="0%" stop-color="#e22227"/>
-          <stop offset="100%" stop-color="#c7080c"/>
-        </radialGradient>
-      </defs>
-      <path d="M14 38 C14 38 3 22 3 13 A11 11 0 1 1 25 13 C25 22 14 38 14 38Z"
-            fill="url(#pg)" stroke="#6c0103" stroke-width="1"/>
-      <circle cx="14" cy="13" r="4" fill="rgba(0,0,0,0.25)"/>
-    </svg>`;
-    const pinDataUri = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(pinSvg);
+    try {
+      const pinCanvas = makePinImage();
+      const pinCtx = pinCanvas.getContext('2d');
+      const pinData = pinCtx.getImageData(0, 0, pinCanvas.width, pinCanvas.height);
+      map.addImage('memory-pin', {
+        width: pinCanvas.width,
+        height: pinCanvas.height,
+        data: pinData.data
+      }, { pixelRatio: 2 });
 
-    const label = document.getElementById('pin-label');
+      map.addSource('memories', {
+        type:'geojson',
+        data:{
+          type:'FeatureCollection',
+          features: memories.map((m,i) => ({
+            type:'Feature',
+            geometry:{ type:'Point', coordinates:[m.lng, m.lat] },
+            properties:{ id:i, title:m.title }
+          }))
+        }
+      });
 
-    // Add each memory as a DOM Marker — these sit above the canvas
-    // so the CSS filter does NOT affect them
-    memories.forEach((m, i) => {
-      const el = document.createElement('img');
-      el.src = pinDataUri;
-      el.className = 'pin-marker';
-      el.alt = m.title;
+      map.addLayer({
+        id:'memory-pins',
+        type:'symbol',
+        source:'memories',
+        layout:{
+          'icon-image':'memory-pin',
+          'icon-size':0.55,
+          'icon-anchor':'bottom',
+          'icon-allow-overlap':true,
+          'icon-ignore-placement':true
+        }
+      });
+
+      // Glow pulse
+      let t = 0;
+      setInterval(() => {
+        t += 0.05;
+        const glow = 0.85 + 0.15 * Math.sin(t);
+        if (map.getLayer('memory-pins')) {
+          map.setPaintProperty('memory-pins', 'icon-opacity', glow);
+        }
+      }, 40);
 
       // Hover label
-      el.addEventListener('mouseenter', (e) => {
-        label.textContent = m.title;
-        label.style.left = e.clientX + 'px';
-        label.style.top  = e.clientY + 'px';
+      const label = document.getElementById('pin-label');
+      map.on('mouseenter', 'memory-pins', e => {
+        map.getCanvas().style.cursor = 'pointer';
+        const pt = e.point;
+        label.textContent = e.features[0].properties.title;
+        label.style.left  = pt.x + 'px';
+        label.style.top   = pt.y + 'px';
         label.classList.add('visible');
       });
-      el.addEventListener('mousemove', (e) => {
-        label.style.left = e.clientX + 'px';
-        label.style.top  = e.clientY + 'px';
-      });
-      el.addEventListener('mouseleave', () => {
+      map.on('mouseleave', 'memory-pins', () => {
+        map.getCanvas().style.cursor = '';
         label.classList.remove('visible');
       });
-
-      // Click → open modal
-      el.addEventListener('click', (e) => {
-        e.stopPropagation();
-        openModal(i);
+      map.on('mousemove', 'memory-pins', e => {
+        const pt = e.point;
+        label.style.left = pt.x + 'px';
+        label.style.top  = pt.y + 'px';
       });
 
-      new maplibregl.Marker({ element:el, anchor:'bottom' })
-        .setLngLat([m.lng, m.lat])
-        .addTo(map);
-    });
-
-    // Gentle pulse animation on all pins
-    let t = 0;
-    setInterval(() => {
-      t += 0.05;
-      const s = 0.92 + 0.08 * Math.sin(t);
-      document.querySelectorAll('.pin-marker').forEach(p => {
-        p.style.transform = 'scale(' + s + ')';
+      // Click → modal
+      map.on('click', 'memory-pins', e => {
+        const id = e.features[0].properties.id;
+        openModal(id);
       });
-    }, 40);
+    } catch(err) {
+      console.error('Map init error:', err);
+    }
 
     document.getElementById('map').classList.add('visible');
   });
